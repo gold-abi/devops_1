@@ -1,0 +1,11 @@
+# Ignore everything by default
+
+\*\*
+
+# Allow only required web files
+
+!index.html
+!style.css
+!script.js
+!Dockerfile
+!.dockerignore
