@@ -12,17 +12,34 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t quote-generator:latest .'
+                sh '''
+                docker build -t quote-generator:latest .
+                '''
             }
         }
 
-        stage('Run Container') {
+        stage('Deploy Locally (Run Container)') {
             steps {
                 sh '''
+                # Stop and remove old container if it exists
                 docker rm -f quote-site || true
-                docker run -d -p 8081:80 --name quote-site quote-generator:latest
+
+                # Run new container from latest image
+                docker run -d \
+                  --name quote-site \
+                  -p 8081:80 \
+                  quote-generator:latest
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Application successfully deployed locally on http://localhost:8081'
+        }
+        failure {
+            echo 'Pipeline failed. Check build or deployment logs.'
         }
     }
 }
